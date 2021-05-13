@@ -4,8 +4,6 @@
 
 Desenvolver uma solução de motion planning implementada em Python utilizando o Simulador Carla.
 
-#
-
 ## Requisitos/Critérios de aceitação
 
 ### Quanto ao projeto de pesquisa
