@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  Run Linter:
+  Linter:
 
     runs-on: ubuntu-latest
 
