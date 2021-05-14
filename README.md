@@ -7,7 +7,7 @@ Desenvolver uma solução de motion planning implementada em Python utilizando o
 ## Requisitos/Critérios de aceitação
 
 ### Quanto ao projeto de pesquisa
-- O aluno deve desenvolver uma solução (script) em Python para o problema de planejamento de veículos autônomos pelo simulador carla
+- O aluno deve desenvolver uma solução (script) em Python para o problema de planejamento de movimento de veículos autônomos pelo simulador carla
 - O aluno deve elaborar um artigo científico sobre planejamento de movimento e a solução desenvolvida.
 - O aluno deve apresentar ambos o script e o artigo para o professor orientador para devidas correções, ajustes e eventual aprovação das atividades desenvolvidas no período de pesquisa.
 - O prazo de entrega das atividades é agosto de 2021.
