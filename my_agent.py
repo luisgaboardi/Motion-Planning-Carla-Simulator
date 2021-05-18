@@ -40,20 +40,7 @@ class BehaviorAgent(Agent):
         self.ignore_traffic_light = ignore_traffic_light
 
         # Sensors
-        # Left
-        self.collision_sensor_left_bp = self._world.get_blueprint_library().find(
-            'sensor.other.obstacle')
-        self.collision_sensor_left_bp.set_attribute('distance', '2.0')
-        self.collision_sensor_left_bp.set_attribute('only_dynamics', 'True')
-        self.collision_sensor_left_bp.set_attribute('hit_radius', '1.0')
-        self.collision_sensor_left_transform = carla.Transform(
-            carla.Location(x=1.5, y=-1, z=0.5), carla.Rotation(yaw=-45))
-        self._collision_sensor_left = self._world.spawn_actor(
-            self.collision_sensor_left_bp, self.collision_sensor_left_transform, attach_to=vehicle)
-        self._collision_sensor_left.listen(lambda data: print(
-            "Esquerda: " + data.other_actor.type_id + " à " + "{:.2f}".format(data.distance) + " metros a frente"))
-
-        # Front
+        ## Front
         self.collision_sensor_front_bp = self._world.get_blueprint_library().find(
             'sensor.other.obstacle')
         self.collision_sensor_front_bp.set_attribute('distance', '20.0')
@@ -66,23 +53,10 @@ class BehaviorAgent(Agent):
         self._collision_sensor_front.listen(
             lambda data: self.obstacle_detection(data))
 
-        # Right
-        self.collision_sensor_right_bp = self._world.get_blueprint_library().find(
-            'sensor.other.obstacle')
-        self.collision_sensor_right_bp.set_attribute('distance', '2.0')
-        self.collision_sensor_right_bp.set_attribute('only_dynamics', 'True')
-        self.collision_sensor_right_bp.set_attribute('hit_radius', '1.0')
-        self.collision_sensor_right_transform = carla.Transform(
-            carla.Location(x=1.5, y=1, z=0.5), carla.Rotation(yaw=45))
-        self._collision_sensor_right = self._world.spawn_actor(
-            self.collision_sensor_right_bp, self.collision_sensor_right_transform, attach_to=vehicle)
-        self._collision_sensor_right.listen(lambda data: print(
-            "Direita: " + data.other_actor.type_id + " à " + "{:.2f}".format(data.distance) + " metros a frente"))
-
         self.camera_bp = self._world.get_blueprint_library().find('sensor.camera.rgb')
         self.camera_bp.set_attribute('sensor_tick', '99')
         self.camera_transform = carla.Transform(
-            carla.Location(x=-2.5, z=3.5), carla.Rotation(pitch=320))
+            carla.Location(x=-5.5, z=3.5), carla.Rotation(pitch=345))
         self._camera = self._world.spawn_actor(
             self.camera_bp, self.camera_transform, attach_to=vehicle)
 
@@ -208,15 +182,6 @@ class BehaviorAgent(Agent):
             :return brake: brake control
         """
 
-        if self.dist_to_obstacle[1] != None:
-            if debug:
-                print(self.dist_to_obstacle[1].type_id + " à " + "{:.2f}".format(
-                    self.dist_to_obstacle[0]) + " metros a frente")
-            return self.dist_to_obstacle[0], self.dist_to_obstacle[1]
-
-        return [None, None]
-
-    def lane_change_obstacle(self, debug=False):
         if self.dist_to_obstacle[1] != None:
             if debug:
                 print(self.dist_to_obstacle[1].type_id + " à " + "{:.2f}".format(

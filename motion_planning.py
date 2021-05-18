@@ -25,22 +25,6 @@ e acompanhando a velocidade do carro da frente ao invés de ficar dando trancos
 # Lista de atores, registra cada novo ator criado e é destruída no fim da execução
 actor_list = []
 
-
-##################################################
-# Frenagem e velocidade atual?
-# Distância e intensidade de freio confortável
-# Clima e tempo
-# Cenário específico
-
-# Sensor diagonal e lateral
-##################################################
-# Sensor GNSS pra coletar a posição
-# Diante da posição do semáforo e da do carro, calcular distância
-# Detecção de semáforo com câmera
-##################################################
-
-
-
 def main():
 
     try:
@@ -59,7 +43,7 @@ def main():
         # e repetibilidade dos testes
         settings = world.get_settings()
         settings.synchronous_mode = True
-        settings.fixed_delta_seconds = 0.06
+        settings.fixed_delta_seconds = 0.055
         world.apply_settings(settings)
 
         # Varíavel explícita à Biblioteca de Blueprints, daqui tiramos o modelo do carro
@@ -88,9 +72,7 @@ def main():
         # world.tick()
 
         agent = BehaviorAgent(vehicle, False)
-        actor_list.append(agent._collision_sensor_left)
         actor_list.append(agent._collision_sensor_front)
-        actor_list.append(agent._collision_sensor_right)
         actor_list.append(agent._camera)
         
         agent.set_destination(agent.vehicle.get_location(), destination_location, clean=True)
