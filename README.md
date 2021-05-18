@@ -2,8 +2,8 @@
 
 ## Utilização
 
-O arquivo **motion_planning.py** deve ser colocado em: carla-simulator/PythonAPI/examples. <br>
 O arquivo **my_agent.py** deve ser colocado em: carla-simulator/PythonAPI/carla/agents/navigation
+Todos os outros script .py devem ficar na pasta de exemplos.
 
 Para rodar:
 
