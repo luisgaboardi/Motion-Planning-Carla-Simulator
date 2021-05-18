@@ -128,7 +128,7 @@ class BehaviorAgent(Agent):
                 next_ = route[index+1]
 
             self.vehicle.get_world().debug.draw_line(current[0].transform.location, next_[0].transform.location,
-                                                     0.2, color=carla.Color(r=0, g=255, b=0), life_time=len(route))
+                                                     0.2, color=carla.Color(r=0, g=255, b=0), life_time=len(route)*1.5)
 
         return route
 
