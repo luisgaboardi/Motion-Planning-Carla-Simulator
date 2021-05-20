@@ -1,43 +1,40 @@
-# Planejamento de Movimento no Simulador Carla
+# Motion Planning on CARLA Simulator
 
-## Objetivo
+## Objective
 
-Desenvolver uma solução de motion planning implementada em Python utilizando o Simulador Carla.
+Develop a motion planning solution implemented in Python using the Carla Simulator.
 
-## Requisitos/Critérios de aceitação
+## Acceptance criteria
 
-### Quanto ao projeto de pesquisa
-- O aluno deve desenvolver uma solução (script) em Python para o problema de planejamento de movimento de veículos autônomos pelo simulador carla
-- O aluno deve elaborar um artigo científico sobre planejamento de movimento e a solução desenvolvida.
-- O aluno deve apresentar ambos o script e o artigo para o professor orientador para devidas correções, ajustes e eventual aprovação das atividades desenvolvidas no período de pesquisa.
-- O prazo de entrega das atividades é agosto de 2021.
+### As for the research project
+- The student must develop a script in Python that solves the motion planning problem for autonomous vehicles in CARLA simulator.
+- The student must prepare a scientific article on motion planning and the developed solution.
+- The student must present both the script and the article to the supervising professor for appropriate corrections, adjustments and eventual approval of the activities developed during the research period.
+- The deadline of the activities is August 2021.
 
-### Quanto à trajetória
-- O veículo deve conseguir chegar de qualquer ponto A para qualquer outro ponto B;
-- A trajetória e os pontos que serão percorridos devem ser selecionados e posicionados de acordo com o mapa de alta definição OpenDRIVE da região.
-- A rota gerada até o destino deve ser eficiente, ou seja, sem dar voltas ou ser maior do que o necessário;
-- O trajeto escolhido deve obedecer as leis de trânsito vigentes
+### As for the trajectory
+- The vehicle must be able to reach any point B from any other point B.
+- The trajectory and the waypoints must be selected and positioned according to the OpenDRIVE high definition map of the region.
+- The route generated to the destination must be efficient, that is, without being longer than necessary;
+- The chosen route must obey the traffic laws
 
-### Quanto ao planejamento de movimento
-- O veículo deve percorrer o trajeto obedecendo as leis de trânsito vigentes, tais como:
-    - Velocidade máxima
-    - Velocidade mínima
-    - Centralização na faixa
-    - Mudança de faixa
-    - Direção de tráfego da via
-    - Semáforos
-    - Placas
-    - Entre outros.
+### As for de motion planning
+- The vehicle must travel the route obeying the current traffic laws, such as:
+    - Maximum speed
+    - Minimum speed
+    - Lane centering
+    - Lane changes
+    - Lane Direction
+    - Traffic lights
+    - Signs
 
-- O veículo deve percorrer o trajeto em segurança, evitando acidentes tais como:
-    - Colisões com outros veículos (frontais, laterais, traseiras)
-    - Colisões com placas, semáforos, cones e outros obstáculos estáticos
-    - Atropelamentos de pedestres ou ciclistas
+- The vehicle must travel the route safely, avoiding accidents such as:
+    - Collisions with other vehicles (front, side, rear)
+    - Collisions with plates, traffic lights, cones and other static obstacles
+    - Pedestrian or cyclist being run over
 
-- O veículo deve percorrer o trajeto confortavelmente, de forma a permitir uma viagem agradável ao passageiro, evitando realizar:
-    - Frenagens bruscas
-    - Acelerações bruscas
-    - Curvas bruscas
-    - Curvas inconstantes
-    - "Acelera, freia, acelera" típico de um trânsito congestionado
-    - Entre outras ações
+- The vehicle must travel the route comfortably, in order to allow a pleasant journey for the passenger, avoiding:
+    - Abrupt braking
+    - Sudden accelerations
+    - Sharp curves
+    - "Accelerate, brake, accelerate" typical behavior of congested traffic
