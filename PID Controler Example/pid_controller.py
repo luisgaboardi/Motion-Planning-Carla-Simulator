@@ -19,7 +19,7 @@ import numpy as np
 
 class VehiclePIDController():
 
-    def __init__(self, vehicle, args_lateral, args_longitudinal, max_throttle=0.75, max_brake=0.3, max_steering=0.8):
+    def __init__(self, vehicle, args_lateral, args_longitudinal, max_throttle=0.75, max_brake=0.3, max_steering=1.0):
         self.max_brake = max_brake
         self.max_steering = max_steering
         self.max_throttle = max_throttle
@@ -46,11 +46,6 @@ class VehiclePIDController():
 
         # Lateral
         current_steering = self.lat_controller.run_step(waypoint)
-        if current_steering > 1.5 * self.past_steering:
-            current_steering /= 2
-        elif current_steering < 1.5 * self.past_steering:
-            current_steering /= 2
-
         if current_steering >= 0:
             steering = min(self.max_steering, current_steering)
         else:

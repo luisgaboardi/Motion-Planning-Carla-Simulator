@@ -1,6 +1,7 @@
 import glob
 import os
 import sys
+from time import sleep
 
 try:
     sys.path.append(glob.glob('../carla/dist/carla-*%d.%d-%s.egg' % (
@@ -32,7 +33,6 @@ class RoutePlanner():
         self.end = end
 
     def generate_route(self, debug=False):
-        # waypoints = self.map.generate_waypoints(1)
         start_waypoint = self.world.get_map().get_waypoint(self.start.location)
         end_waypoint = self.world.get_map().get_waypoint(self.end.location)
         route = []
@@ -41,8 +41,6 @@ class RoutePlanner():
         while not equal_location(wp, end_waypoint):
             wp = wp.next(1)[0]
             route.append(wp)
-
-        
 
         if debug:
             for wp in route:
@@ -83,9 +81,8 @@ def main():
         for wp in route:
             while not ((abs(vehicle.get_location().x - wp.transform.location.x) <= 5
 	                    and abs(vehicle.get_location().y - wp.transform.location.y) <= 5)):
-                control_signal = control_vehicle.run_step(25, wp)
+                control_signal = control_vehicle.run_step(vehicle.get_speed_limit(), wp)
                 vehicle.apply_control(control_signal)
-
 
 
 
