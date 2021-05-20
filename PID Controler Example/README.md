@@ -1,9 +1,9 @@
-## Utilização
+## Usage
 
-Ambos os arquivos devem ser colocados em: carla-simulator/PythonAPI/examples. <br>
+Both files must be placed in: carla-simulator/PythonAPI/examples.<br>
 
-Para rodar:
+**To run:**
 
 ```
-python3 free_roam_with_PID.py
+python3 travel_route_with_PID.py
 ```
