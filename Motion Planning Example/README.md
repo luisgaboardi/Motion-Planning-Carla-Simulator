@@ -1,16 +1,16 @@
-## Utilização
+## Usage
 
-O arquivo **motion_planning.py** deve ser colocado em: carla-simulator/PythonAPI/examples. <br>
-O arquivo **my_agent.py** deve ser colocado em: carla-simulator/PythonAPI/carla/agents/navigation
+The file **motion_planning.py** must be placed in: carla-simulator/PythonAPI/examples. <br>
+The file **my_agent.py** must be placed in: carla-simulator/PythonAPI/carla/agents/navigation
 
-Para rodar:
+To run:
 
 ```
 python3 motion_planning.py
 ```
 
-Caso deseje rodar com outros veículos na simulação, abra outro terminal na pasta de "examples" e digite o seguinte comando:
-(Quanto a quantidade de veículos, respeite a limitação de hardware do seu computador):
+If you want to run with other vehicles in the simulation, open another terminal in the "examples" folder and enter the following command:
+(Regarding the number of vehicles, respect the hardware limitation of your computer):
 
 ```
 python3 spawn_npc.py -n 100 -w 0
