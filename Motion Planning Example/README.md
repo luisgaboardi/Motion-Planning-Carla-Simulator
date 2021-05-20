@@ -1,3 +1,7 @@
+## Specifications
+
+CARLA: version 0.9.10
+
 ## Usage
 
 The file **motion_planning.py** must be placed in: carla-simulator/PythonAPI/examples. <br>
