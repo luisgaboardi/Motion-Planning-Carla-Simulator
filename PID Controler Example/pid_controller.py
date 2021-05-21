@@ -3,7 +3,6 @@ import math
 import os
 import sys
 
-from agents.tools.misc import get_speed
 try:
     sys.path.append(glob.glob('../carla/dist/carla-*%d.%d-%s.egg' % (
         sys.version_info.major,
@@ -16,6 +15,17 @@ import carla
 import queue
 import numpy as np
 
+def get_speed(vehicle):
+    """
+    Compute speed of a vehicle in Km/h.
+
+        :param vehicle: the vehicle for which speed is calculated
+        :return: speed as a float in Km/h
+    """
+    vel = vehicle.get_velocity()
+
+    return 3.6 * math.sqrt(vel.x ** 2 + vel.y ** 2 + vel.z ** 2)
+
 
 class VehiclePIDController():
 
@@ -26,7 +36,6 @@ class VehiclePIDController():
 
         self.vehicle = vehicle
         self.world = vehicle.get_world()
-        self.past_steering = self.vehicle.get_control().steer
         self.long_controller = PIDLongitudinalControl(self.vehicle, **args_longitudinal)
         self.lat_controller = PIDLateralControl(self.vehicle, **args_lateral)
 
@@ -54,7 +63,6 @@ class VehiclePIDController():
         control.steer = steering
         control.hand_brake = False
         control.manual_gear_shift = False
-        self.past_steering = steering
 
         return control
 
