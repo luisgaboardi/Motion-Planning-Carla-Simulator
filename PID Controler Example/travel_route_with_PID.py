@@ -67,8 +67,8 @@ def main():
         destination_point = carla.Transform(carla.Location(x=-65, y=-3, z=1))
         vehicle = world.spawn_actor(vehicle_bp, spawn_point)
         actor_list.append(vehicle)
-	
-	sleep(2)
+	    
+        sleep(2)
 
         world.get_spectator().set_transform(vehicle.get_transform())
 
