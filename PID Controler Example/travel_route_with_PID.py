@@ -22,6 +22,21 @@ def equal_location(first_waypoint, second_waypoint):
 
 	return False
 
+class Agent():
+
+    def __init__(self, vehicle):
+        self.vehicle = vehicle
+        self.world = vehicle.get_world()
+        self.spawn_point = None
+        self.destination_point = None
+        self.route_planner = None
+        self.route = []
+
+    def get_route(self, spawn_point, destination_point, debug=True):
+        self.spawn_point = spawn_point
+        self.destination_point = destination_point
+        self.route_planner = RoutePlanner(self.world, self.spawn_point, self.destination_point)
+        return self.route_planner.generate_route(debug=debug)
 
 
 class RoutePlanner():
@@ -32,7 +47,7 @@ class RoutePlanner():
         self.start = start
         self.end = end
 
-    def generate_route(self, debug=False):
+    def generate_route(self, debug=True):
         start_waypoint = self.world.get_map().get_waypoint(self.start.location)
         end_waypoint = self.world.get_map().get_waypoint(self.end.location)
         route = []
@@ -68,17 +83,17 @@ def main():
         vehicle = world.spawn_actor(vehicle_bp, spawn_point)
         actor_list.append(vehicle)
 	    
-        sleep(2)
+        sleep(1)
 
         world.get_spectator().set_transform(vehicle.get_transform())
 
         control_vehicle = VehiclePIDController(vehicle,
-                            args_lateral={'K_P':0.8, 'K_D':0.3, 'K_I':0.13},
-                            args_longitudinal={'K_P':0.8, 'K_D':0.3, 'K_I':0.03}
+                            args_lateral={'K_P': 0.58, 'K_D': 0.02, 'K_I': 0.5},
+                            args_longitudinal={'K_P': 0.15, 'K_D': 0.05, 'K_I': 0.07,}
                         )
 
-        planner = RoutePlanner(world, spawn_point, destination_point)
-        route = planner.generate_route(debug=True)
+        agent = Agent(vehicle)
+        route = agent.get_route(spawn_point, destination_point, True)
 
         for wp in route:
             while not ((abs(vehicle.get_location().x - wp.transform.location.x) <= 5
