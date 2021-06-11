@@ -18,7 +18,7 @@ Develop a motion planning solution implemented in Python using the Carla Simulat
 - The route generated to the destination must be efficient, that is, without being longer than necessary;
 - The chosen route must obey the traffic laws
 
-### As for de motion planning
+### As for the motion planning
 - The vehicle must travel the route obeying the current traffic laws, such as:
     - Maximum speed
     - Minimum speed
