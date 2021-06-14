@@ -41,7 +41,7 @@ def main():
         
         world.tick()
 
-        agent = Agent(vehicle)
+        agent = Agent(vehicle, ignore_traffic_light=False)
         actor_list.append(agent._camera)
         agent.get_route(spawn_point, destination_point)
 
@@ -60,6 +60,7 @@ def main():
 
             control = agent.run_step()
             vehicle.apply_control(control)
+            agent.show_path(distance=15)
 
 
     finally:
@@ -69,6 +70,7 @@ def main():
 
         world.tick()
 
+        # Desabilita modo síncrono para permitir movimentação da tela
         settings.synchronous_mode = False
         world.apply_settings(settings)
 

@@ -60,6 +60,14 @@ class Agent():
 
         return control
 
+    def show_path(self, distance=15):
+        route_lenght = len(self.route)
+        for i in range(distance):
+            if i < route_lenght:
+                self.world.debug.draw_string(self.route[i].transform.location, 'o',
+                                    draw_shadow=False, color=carla.Color(r=0, g=255, b=0),
+                                    life_time=1, persistent_lines=True)
+
     def equal_location(self, vehicle, waypoint):
 	    if((abs(vehicle.get_location().x - waypoint.transform.location.x) <= 0.5
 	    and abs(vehicle.get_location().y - waypoint.transform.location.y) <= 0.5)):
