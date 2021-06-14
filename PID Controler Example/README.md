@@ -4,7 +4,7 @@ CARLA: version 0.9.10
 
 ## Usage
 
-Both files must be placed in: carla-simulator/PythonAPI/examples.<br>
+All files must be placed in: carla-simulator/PythonAPI/examples.<br>
 
 **To run:**
 
