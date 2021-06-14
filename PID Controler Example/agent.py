@@ -17,8 +17,9 @@ from route_planner import RoutePlanner
 
 class Agent():
 
-    def __init__(self, vehicle):
+    def __init__(self, vehicle, ignore_traffic_light=False):
         self.vehicle = vehicle
+        self.ignore_traffic_light = ignore_traffic_light
         self.world = vehicle.get_world()
         self.map = self.world.get_map()
         self.control_vehicle = VehiclePIDController(vehicle,
@@ -31,6 +32,8 @@ class Agent():
         self.destination_point = None
         self.route_planner = None
         self.route = []
+
+        self.light_id_to_ignore = -1
 
         # Sensors
         self.camera_bp = self.world.get_blueprint_library().find('sensor.other.collision')
@@ -63,10 +66,45 @@ class Agent():
 		    return True
 	    return False
 
+    def traffic_light_manager(self, waypoint):
+        """
+        This method is in charge of behaviors for red lights and stops.
+
+        WARNING: What follows is a proxy to avoid having a car brake after running a yellow light.
+        This happens because the car is still under the influence of the semaphore,
+        even after passing it. So, the semaphore id is temporarely saved to
+        ignore it and go around this issue, until the car is near a new one.
+
+            :param waypoint: current waypoint of the agent
+        """
+
+        light_id = self.vehicle.get_traffic_light(
+        ).id if self.vehicle.get_traffic_light() is not None else -1
+
+        if str(self.vehicle.get_traffic_light_state()) == "Red" or str(self.vehicle.get_traffic_light_state()) == "Yellow":
+            if not waypoint.is_junction and (self.light_id_to_ignore != light_id or light_id == -1):
+                return 1
+            elif waypoint.is_junction and light_id != -1:
+                self.light_id_to_ignore = light_id
+        if self.light_id_to_ignore != light_id:
+            self.light_id_to_ignore = -1
+        return 0
+
     def run_step(self):
-        control = self.control_vehicle.run_step(self.vehicle.get_speed_limit(), self.route[0])
+
+        control = None
+        ego_vehicle_wp = self.map.get_waypoint(self.vehicle.get_location())
+
         if self.equal_location(self.vehicle, self.route[0]):
             self.route.pop(0)
+
+        # 1: Red lights and stops behavior
+        if self.traffic_light_manager(ego_vehicle_wp) != 0 and not self.ignore_traffic_light:
+            control = self.soft_stop()
+        # Normal
+        else:
+            control = self.control_vehicle.run_step(self.vehicle.get_speed_limit(), self.route[0])
+
         return control
 
     def arrived(self):
