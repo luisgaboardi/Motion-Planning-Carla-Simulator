@@ -27,7 +27,7 @@ def main():
 
         settings = world.get_settings()
         settings.synchronous_mode = True
-        settings.fixed_delta_seconds = 0.025
+        settings.fixed_delta_seconds = 0.1
         world.apply_settings(settings)
 
         blueprint_library = world.get_blueprint_library()
@@ -41,7 +41,7 @@ def main():
         
         world.tick()
 
-        agent = Agent(vehicle, ignore_traffic_light=True)
+        agent = Agent(vehicle, ignore_traffic_light=False)
         actor_list.append(agent._camera)
         actor_list.append(agent._collision_sensor_front)
         agent.get_route(spawn_point, destination_point)

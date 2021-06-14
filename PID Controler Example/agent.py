@@ -35,6 +35,12 @@ class Agent():
 
         self.light_id_to_ignore = -1
 
+        self.obstacle_info = [None, None]
+        self.tailgaiting_distance = 7
+        self.start_brake_distance = 5
+        self.emergency_brake_distance = 3
+        self.min_speed = 10.0
+
         # Sensors
         self.camera_bp = self.world.get_blueprint_library().find('sensor.other.collision')
         self.camera_transform = carla.Transform(
@@ -42,6 +48,31 @@ class Agent():
         self._camera = self.world.spawn_actor(
             self.camera_bp, self.camera_transform, attach_to=vehicle)
 
+        self.collision_sensor_front_bp = self.world.get_blueprint_library().find(
+            'sensor.other.obstacle')
+        self.collision_sensor_front_bp.set_attribute('distance', '20.0')
+        self.collision_sensor_front_bp.set_attribute('only_dynamics', 'True')
+        self.collision_sensor_front_bp.set_attribute('sensor_tick', '0.1')
+        self.collision_sensor_front_bp.set_attribute('hit_radius', '1.0')
+        self.collision_sensor_front_transform = carla.Transform(
+            carla.Location(x=1.5, z=0.5), carla.Rotation())
+        self._collision_sensor_front = self.world.spawn_actor(
+            self.collision_sensor_front_bp, self.collision_sensor_front_transform, attach_to=vehicle)
+        self._collision_sensor_front.listen(
+            lambda data: self.obstacle_detection(data))
+
+    def obstacle_detection(self, data):
+        self.obstacle_info[0] = data.distance
+        self.obstacle_info[1] = data.other_actor
+
+    def collision_avoidance(self, debug=False):
+        if self.obstacle_info[1] != None:
+            if debug:
+                print(self.obstacle_info[1].type_id + " à " + "{:.2f}".format(
+                    self.obstacle_info[0]) + " metros a frente")
+            return self.obstacle_info[0], self.obstacle_info[1]
+
+        return [None, None]
 
     def get_route(self, spawn_point, destination_point, debug=True):
         self.spawn_point = spawn_point
@@ -51,13 +82,14 @@ class Agent():
         self.route = self.route_planner.generate_route(debug=debug)
         return self.route
 
-    def soft_stop(self):
+    def emergency_stop(self):
         control = carla.VehicleControl()
-        control.steer = 0.0
-        control.throttle = 0.0
-        control.brake = 0.65
-        control.hand_brake = False
+        control.brake = 1
+        return control
 
+    def soft_stop(self):
+        control = self.vehicle.get_control()
+        control.brake = 0.65
         return control
 
     def show_path(self, distance=15):
@@ -65,14 +97,14 @@ class Agent():
         for i in range(distance):
             if i < route_lenght:
                 self.world.debug.draw_string(self.route[i].transform.location, 'o',
-                                    draw_shadow=False, color=carla.Color(r=0, g=255, b=0),
-                                    life_time=1, persistent_lines=True)
+                                             draw_shadow=False, color=carla.Color(r=0, g=255, b=0),
+                                             life_time=1, persistent_lines=True)
 
     def equal_location(self, vehicle, waypoint):
-	    if((abs(vehicle.get_location().x - waypoint.transform.location.x) <= 0.5
-	    and abs(vehicle.get_location().y - waypoint.transform.location.y) <= 0.5)):
-		    return True
-	    return False
+        if((abs(vehicle.get_location().x - waypoint.transform.location.x) <= 0.5
+                and abs(vehicle.get_location().y - waypoint.transform.location.y) <= 0.5)):
+            return True
+        return False
 
     def traffic_light_manager(self, waypoint):
         """
@@ -98,22 +130,30 @@ class Agent():
             self.light_id_to_ignore = -1
         return 0
 
-    def run_step(self):
+    def run_step(self, debug=False):
 
-        control = None
         ego_vehicle_wp = self.map.get_waypoint(self.vehicle.get_location())
-
         if self.equal_location(self.vehicle, self.route[0]):
             self.route.pop(0)
 
-        # 1: Red lights and stops behavior
-        if self.traffic_light_manager(ego_vehicle_wp) != 0 and not self.ignore_traffic_light:
-            control = self.soft_stop()
-        # Normal
-        else:
-            control = self.control_vehicle.run_step(self.vehicle.get_speed_limit(), self.route[0])
+        obstacle = self.collision_avoidance(debug=debug)
 
-        return control
+        if self.traffic_light_manager(ego_vehicle_wp) != 0 and not self.ignore_traffic_light:
+            return self.emergency_stop()
+
+        elif obstacle[1] != None:
+            if obstacle[0] <= self.emergency_brake_distance:
+                print('Emergency Stop!\n')
+                return self.emergency_stop()
+            else:
+                return self.control_vehicle.run_step(
+                    self.vehicle.get_speed_limit(), self.route[0])
+
+        else:
+            # Normal
+            return self.control_vehicle.run_step(
+                self.vehicle.get_speed_limit(), self.route[0])
+
 
     def arrived(self):
         return len(self.route) <= 5
