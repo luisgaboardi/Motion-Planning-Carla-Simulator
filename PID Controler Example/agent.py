@@ -23,7 +23,7 @@ class Agent():
         self.map = self.world.get_map()
         self.control_vehicle = VehiclePIDController(vehicle,
                                                     args_lateral={
-                                                        'K_P': 0.58, 'K_D': 0.02, 'K_I': 0.5},
+                                                        'K_P': 0.58, 'K_D': 0.2, 'K_I': 0.5},
                                                     args_longitudinal={
                                                         'K_P': 0.15, 'K_D': 0.05, 'K_I': 0.07}
                                                     )
@@ -31,6 +31,14 @@ class Agent():
         self.destination_point = None
         self.route_planner = None
         self.route = []
+
+        # Sensors
+        self.camera_bp = self.world.get_blueprint_library().find('sensor.other.collision')
+        self.camera_transform = carla.Transform(
+            carla.Location(x=-5.5, z=3.5), carla.Rotation(pitch=345))
+        self._camera = self.world.spawn_actor(
+            self.camera_bp, self.camera_transform, attach_to=vehicle)
+
 
     def get_route(self, spawn_point, destination_point, debug=True):
         self.spawn_point = spawn_point
@@ -56,12 +64,10 @@ class Agent():
 	    return False
 
     def run_step(self):
-        print("Oi")
-        while not self.equal_location(self.vehicle, self.route[0]): 
-            control = self.control_vehicle.run_step(self.vehicle.get_speed_limit(), self.route[0])
-            self.vehicle.apply_control(control)
-
-        self.route.pop(0)
+        control = self.control_vehicle.run_step(self.vehicle.get_speed_limit(), self.route[0])
+        if self.equal_location(self.vehicle, self.route[0]):
+            self.route.pop(0)
+        return control
 
     def arrived(self):
         return len(self.route) <= 5
