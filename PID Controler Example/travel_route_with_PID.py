@@ -27,7 +27,7 @@ def main():
 
         settings = world.get_settings()
         settings.synchronous_mode = True
-        settings.fixed_delta_seconds = 0.016
+        settings.fixed_delta_seconds = 0.025
         world.apply_settings(settings)
 
         blueprint_library = world.get_blueprint_library()
@@ -41,8 +41,9 @@ def main():
         
         world.tick()
 
-        agent = Agent(vehicle, ignore_traffic_light=False)
+        agent = Agent(vehicle, ignore_traffic_light=True)
         actor_list.append(agent._camera)
+        actor_list.append(agent._collision_sensor_front)
         agent.get_route(spawn_point, destination_point)
 
         world.tick()
@@ -58,13 +59,14 @@ def main():
                 sleep(3)
                 break
 
-            control = agent.run_step()
+            control = agent.run_step(debug=True)
             vehicle.apply_control(control)
             agent.show_path(distance=15)
 
 
     finally:
         print('Destruindo atores')
+        agent._collision_sensor_front.stop()
         client.apply_batch([carla.command.DestroyActor(x) for x in actor_list])
         print('Feito.')
 
