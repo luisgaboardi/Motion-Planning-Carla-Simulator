@@ -66,7 +66,7 @@ class Agent():
         self.obstacle_info[1] = data.other_actor
 
     def collision_avoidance(self, debug=False):
-        if self.obstacle_info[1] != None:
+        if self.obstacle_info[1]:
             if debug:
                 print(self.obstacle_info[1].type_id + " à " + "{:.2f}".format(
                     self.obstacle_info[0]) + " metros a frente")
@@ -84,7 +84,11 @@ class Agent():
 
     def emergency_stop(self):
         control = carla.VehicleControl()
-        control.brake = 1
+        control.steer = 0.0
+        control.throttle = 0.0
+        control.brake = 1.0
+        control.hand_brake = False
+
         return control
 
     def soft_stop(self):
@@ -101,8 +105,8 @@ class Agent():
                                              life_time=1, persistent_lines=True)
 
     def equal_location(self, vehicle, waypoint):
-        if((abs(vehicle.get_location().x - waypoint.transform.location.x) <= 0.5
-                and abs(vehicle.get_location().y - waypoint.transform.location.y) <= 0.5)):
+        if((abs(vehicle.get_location().x - waypoint.transform.location.x) <= 1
+                and abs(vehicle.get_location().y - waypoint.transform.location.y) <= 1)):
             return True
         return False
 
@@ -118,8 +122,7 @@ class Agent():
             :param waypoint: current waypoint of the agent
         """
 
-        light_id = self.vehicle.get_traffic_light(
-        ).id if self.vehicle.get_traffic_light() is not None else -1
+        light_id = self.vehicle.get_traffic_light().id if self.vehicle.get_traffic_light() is not None else -1
 
         if str(self.vehicle.get_traffic_light_state()) == "Red" or str(self.vehicle.get_traffic_light_state()) == "Yellow":
             if not waypoint.is_junction and (self.light_id_to_ignore != light_id or light_id == -1):
@@ -136,23 +139,18 @@ class Agent():
         if self.equal_location(self.vehicle, self.route[0]):
             self.route.pop(0)
 
-        obstacle = self.collision_avoidance(debug=debug)
-
         if self.traffic_light_manager(ego_vehicle_wp) != 0 and not self.ignore_traffic_light:
             return self.emergency_stop()
 
-        elif obstacle[1] != None:
-            if obstacle[0] <= self.emergency_brake_distance:
-                print('Emergency Stop!\n')
-                return self.emergency_stop()
-            else:
-                return self.control_vehicle.run_step(
-                    self.vehicle.get_speed_limit(), self.route[0])
+        obstacle = self.collision_avoidance(debug=debug)
+        if obstacle[0] and obstacle[0] <= self.emergency_brake_distance:
+            print('Emergency Stop!\n')
+            return self.emergency_stop()
 
-        else:
-            # Normal
-            return self.control_vehicle.run_step(
-                self.vehicle.get_speed_limit(), self.route[0])
+        self.obstacle_info = [None, None]
+
+        return self.control_vehicle.run_step(
+            self.vehicle.get_speed_limit(), self.route[0])
 
 
     def arrived(self):

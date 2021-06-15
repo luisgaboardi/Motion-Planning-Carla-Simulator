@@ -27,7 +27,7 @@ def main():
 
         settings = world.get_settings()
         settings.synchronous_mode = True
-        settings.fixed_delta_seconds = 0.1
+        settings.fixed_delta_seconds = 0.035
         world.apply_settings(settings)
 
         blueprint_library = world.get_blueprint_library()
