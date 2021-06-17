@@ -27,17 +27,23 @@ def main():
 
         settings = world.get_settings()
         settings.synchronous_mode = True
-        settings.fixed_delta_seconds = 0.035
+        settings.fixed_delta_seconds = 0.025
         world.apply_settings(settings)
 
         blueprint_library = world.get_blueprint_library()
         vehicle_bp = blueprint_library.filter('model3')[0]
 
-        spawn_point = carla.Transform(carla.Location(x=242.3, y=4, z=1), carla.Rotation(yaw=270))
-        destination_point = carla.Transform(carla.Location(x=-65, y=-3, z=1))
+        spawn_point = world.get_map().get_spawn_points()[64]
+        # spawn_point = carla.Transform(carla.Location(x=220.3, y=4, z=1), carla.Rotation(yaw=90))
+        destination_point = world.get_map().get_spawn_points()[29]
+        # destination_point = carla.Transform(carla.Location(x=35, y=-3, z=1))
         vehicle = world.spawn_actor(vehicle_bp, spawn_point)
         actor_list.append(vehicle)
         world.get_spectator().set_transform(vehicle.get_transform())
+
+        obstacle_spawn_point = world.get_map().get_spawn_points()[110]
+        obstacle = world.spawn_actor(vehicle_bp, obstacle_spawn_point)
+        actor_list.append(obstacle)
         
         world.tick()
 

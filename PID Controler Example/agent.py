@@ -38,7 +38,7 @@ class Agent():
         self.obstacle_info = [None, None]
         self.tailgaiting_distance = 7
         self.start_brake_distance = 5
-        self.emergency_brake_distance = 3
+        self.emergency_brake_distance = 5
         self.min_speed = 10.0
 
         # Sensors
