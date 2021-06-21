@@ -54,6 +54,8 @@ def main():
 
         world.tick()
 
+        world.get_spectator().set_transform(agent._camera.get_transform())
+
         while (True):
 
             world.tick()
@@ -66,6 +68,7 @@ def main():
                 break
 
             control = agent.run_step(debug=True)
+            agent.update_information()
             vehicle.apply_control(control)
             agent.show_path(distance=15)
 

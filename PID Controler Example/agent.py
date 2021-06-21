@@ -1,6 +1,7 @@
 import glob
 import os
 import sys
+import math
 
 try:
     sys.path.append(glob.glob('../carla/dist/carla-*%d.%d-%s.egg' % (
@@ -36,10 +37,7 @@ class Agent():
         self.light_id_to_ignore = -1
 
         self.obstacle_info = [None, None]
-        self.tailgaiting_distance = 7
-        self.start_brake_distance = 5
         self.emergency_brake_distance = 5
-        self.min_speed = 10.0
 
         # Sensors
         self.camera_bp = self.world.get_blueprint_library().find('sensor.other.collision')
@@ -60,6 +58,19 @@ class Agent():
             self.collision_sensor_front_bp, self.collision_sensor_front_transform, attach_to=vehicle)
         self._collision_sensor_front.listen(
             lambda data: self.obstacle_detection(data))
+
+    def get_speed(self, vehicle):
+        """
+        Calcula o valor da velocidade de um veículo em Km/h
+            :param vehicle: ator que se deseja saber a velocidade resultante
+            :return: valor da velocidade do veículo em Km/h
+        """
+        velocity = vehicle.get_velocity()
+        return 3.6*math.sqrt(velocity.x**2 + velocity.y**2 + velocity.z**2)
+
+    def update_information(self):
+        self.emergency_brake_distance = max(self.get_speed(self.vehicle)/3.0, 1)
+        print(self.emergency_brake_distance)
 
     def obstacle_detection(self, data):
         self.obstacle_info[0] = data.distance
@@ -151,7 +162,8 @@ class Agent():
 
         return self.control_vehicle.run_step(
             self.vehicle.get_speed_limit(), self.route[0])
-
+        # return self.control_vehicle.run_step(
+        #     100, self.route[0])
 
     def arrived(self):
-        return len(self.route) <= 5
+        return len(self.route) <= 1
