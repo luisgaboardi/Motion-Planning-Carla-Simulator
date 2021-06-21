@@ -34,9 +34,7 @@ def main():
         vehicle_bp = blueprint_library.filter('model3')[0]
 
         spawn_point = world.get_map().get_spawn_points()[64]
-        # spawn_point = carla.Transform(carla.Location(x=220.3, y=4, z=1), carla.Rotation(yaw=90))
         destination_point = world.get_map().get_spawn_points()[29]
-        # destination_point = carla.Transform(carla.Location(x=35, y=-3, z=1))
         vehicle = world.spawn_actor(vehicle_bp, spawn_point)
         actor_list.append(vehicle)
         world.get_spectator().set_transform(vehicle.get_transform())
@@ -49,7 +47,7 @@ def main():
 
         agent = Agent(vehicle, ignore_traffic_light=False)
         actor_list.append(agent._camera)
-        actor_list.append(agent._collision_sensor_front)
+        actor_list.append(agent.obstacle_sensor)
         agent.get_route(spawn_point, destination_point)
 
         world.tick()
@@ -73,7 +71,7 @@ def main():
         vehicle.apply_control(agent.soft_stop())
 
         print('Destroying actors')
-        agent._collision_sensor_front.stop()
+        agent.obstacle_sensor.stop()
         client.apply_batch([carla.command.DestroyActor(x) for x in actor_list])
         print('Done.')
 

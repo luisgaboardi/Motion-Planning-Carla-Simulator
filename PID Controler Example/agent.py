@@ -39,6 +39,7 @@ class Agent():
         self.obstacle_info = [None, None]
         self.emergency_brake_distance = 1.5
         self.brake_distance = 5
+        self.min_speed = 20
         self.status = ""
 
         # Sensors
@@ -48,17 +49,17 @@ class Agent():
         self._camera = self.world.spawn_actor(
             self.camera_bp, self.camera_transform, attach_to=vehicle)
 
-        self.collision_sensor_front_bp = self.world.get_blueprint_library().find(
+        self.obstacle_sensor_bp = self.world.get_blueprint_library().find(
             'sensor.other.obstacle')
-        self.collision_sensor_front_bp.set_attribute('distance', '30.0')
-        self.collision_sensor_front_bp.set_attribute('only_dynamics', 'True')
-        self.collision_sensor_front_bp.set_attribute('sensor_tick', '0.1')
-        self.collision_sensor_front_bp.set_attribute('hit_radius', '1.0')
-        self.collision_sensor_front_transform = carla.Transform(
+        self.obstacle_sensor_bp.set_attribute('distance', '20.0')
+        self.obstacle_sensor_bp.set_attribute('only_dynamics', 'True')
+        self.obstacle_sensor_bp.set_attribute('sensor_tick', '0.1')
+        self.obstacle_sensor_bp.set_attribute('hit_radius', '1.0')
+        self.obstacle_sensor_transform = carla.Transform(
             carla.Location(x=1.5, z=0.5), carla.Rotation())
-        self._collision_sensor_front = self.world.spawn_actor(
-            self.collision_sensor_front_bp, self.collision_sensor_front_transform, attach_to=vehicle)
-        self._collision_sensor_front.listen(
+        self.obstacle_sensor = self.world.spawn_actor(
+            self.obstacle_sensor_bp, self.obstacle_sensor_transform, attach_to=vehicle)
+        self.obstacle_sensor.listen(
             lambda data: self.obstacle_detection(data))
 
     def get_speed(self, vehicle):
@@ -145,6 +146,9 @@ class Agent():
             self.light_id_to_ignore = -1
         return 0
 
+    def arrived(self):
+        return len(self.route) <= 1
+
     def run_step(self, debug=False):
 
         ego_vehicle_wp = self.map.get_waypoint(self.vehicle.get_location())
@@ -159,9 +163,14 @@ class Agent():
 
         obstacle = self.collision_avoidance(debug=debug)
         if obstacle[0]:
+            if obstacle[0] > self.brake_distance:
+                if self.status != 'following':
+                    self.status = 'following'
+                    print(self.status)
+                return self.control_vehicle.run_step(max(self.get_speed(obstacle[1]), self.min_speed), self.route[0])
             if obstacle[0] <= self.emergency_brake_distance:
-                if self.status != 'emergency_stop':
-                    self.status = 'emergency_stop'
+                if self.status != 'stop':
+                    self.status = 'stop'
                     print(self.status)
                 return self.emergency_stop()
             elif obstacle[0] <= self.brake_distance:
@@ -177,8 +186,3 @@ class Agent():
             print(self.status)
         return self.control_vehicle.run_step(
             self.vehicle.get_speed_limit(), self.route[0])
-        # return self.control_vehicle.run_step(
-        #     100, self.route[0])
-
-    def arrived(self):
-        return len(self.route) <= 1
