@@ -56,28 +56,26 @@ def main():
 
         world.get_spectator().set_transform(agent._camera.get_transform())
 
-        while (True):
+        while not agent.arrived():
 
             world.tick()
             world.get_spectator().set_transform(agent._camera.get_transform())
 
-            if agent.arrived():
-                vehicle.apply_control(agent.soft_stop())
-                print("Target reached, mission accomplished...")
-                sleep(3)
-                break
-
-            control = agent.run_step(debug=True)
+            control = agent.run_step(debug=False)
             agent.update_information()
             vehicle.apply_control(control)
             agent.show_path(distance=15)
 
 
     finally:
-        print('Destruindo atores')
+
+        print("Target reached, mission accomplished...")
+        vehicle.apply_control(agent.soft_stop())
+
+        print('Destroying actors')
         agent._collision_sensor_front.stop()
         client.apply_batch([carla.command.DestroyActor(x) for x in actor_list])
-        print('Feito.')
+        print('Done.')
 
         world.tick()
 

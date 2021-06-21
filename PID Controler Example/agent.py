@@ -37,7 +37,9 @@ class Agent():
         self.light_id_to_ignore = -1
 
         self.obstacle_info = [None, None]
-        self.emergency_brake_distance = 5
+        self.emergency_brake_distance = 1.5
+        self.brake_distance = 5
+        self.status = ""
 
         # Sensors
         self.camera_bp = self.world.get_blueprint_library().find('sensor.other.collision')
@@ -48,7 +50,7 @@ class Agent():
 
         self.collision_sensor_front_bp = self.world.get_blueprint_library().find(
             'sensor.other.obstacle')
-        self.collision_sensor_front_bp.set_attribute('distance', '20.0')
+        self.collision_sensor_front_bp.set_attribute('distance', '30.0')
         self.collision_sensor_front_bp.set_attribute('only_dynamics', 'True')
         self.collision_sensor_front_bp.set_attribute('sensor_tick', '0.1')
         self.collision_sensor_front_bp.set_attribute('hit_radius', '1.0')
@@ -69,8 +71,7 @@ class Agent():
         return 3.6*math.sqrt(velocity.x**2 + velocity.y**2 + velocity.z**2)
 
     def update_information(self):
-        self.emergency_brake_distance = max(self.get_speed(self.vehicle)/3.0, 1)
-        print(self.emergency_brake_distance)
+        self.brake_distance = max(self.get_speed(self.vehicle)/3, self.emergency_brake_distance)
 
     def obstacle_detection(self, data):
         self.obstacle_info[0] = data.distance
@@ -151,15 +152,29 @@ class Agent():
             self.route.pop(0)
 
         if self.traffic_light_manager(ego_vehicle_wp) != 0 and not self.ignore_traffic_light:
+            if self.status != 'red_light':
+                self.status = 'red_light'
+                print(self.status)
             return self.emergency_stop()
 
         obstacle = self.collision_avoidance(debug=debug)
-        if obstacle[0] and obstacle[0] <= self.emergency_brake_distance:
-            print('Emergency Stop!\n')
-            return self.emergency_stop()
+        if obstacle[0]:
+            if obstacle[0] <= self.emergency_brake_distance:
+                if self.status != 'emergency_stop':
+                    self.status = 'emergency_stop'
+                    print(self.status)
+                return self.emergency_stop()
+            elif obstacle[0] <= self.brake_distance:
+                if self.status != 'breaking':
+                    self.status = 'breaking'
+                    print(self.status)
+                return self.soft_stop()
 
         self.obstacle_info = [None, None]
 
+        if self.status != 'normal':
+            self.status = 'normal'
+            print(self.status)
         return self.control_vehicle.run_step(
             self.vehicle.get_speed_limit(), self.route[0])
         # return self.control_vehicle.run_step(
