@@ -33,40 +33,32 @@ def main():
         blueprint_library = world.get_blueprint_library()
         vehicle_bp = blueprint_library.filter('model3')[0]
 
-        spawn_point = world.get_map().get_spawn_points()[64]
-        destination_point = world.get_map().get_spawn_points()[29]
+        spawn_point = world.get_map().get_spawn_points()[126]
+        destination_point = world.get_map().get_spawn_points()[9]
         vehicle = world.spawn_actor(vehicle_bp, spawn_point)
         actor_list.append(vehicle)
         world.get_spectator().set_transform(vehicle.get_transform())
-
-        obstacle_spawn_point = world.get_map().get_spawn_points()[110]
-        obstacle = world.spawn_actor(vehicle_bp, obstacle_spawn_point)
-        actor_list.append(obstacle)
         
         world.tick()
 
-        agent = Agent(vehicle, ignore_traffic_light=False)
+        agent = Agent(vehicle, ignore_traffic_light=True)
         actor_list.append(agent._camera)
         actor_list.append(agent.obstacle_sensor)
         agent.get_route(spawn_point, destination_point)
 
         world.tick()
-
         world.get_spectator().set_transform(agent._camera.get_transform())
 
         while not agent.arrived():
-
             world.tick()
             world.get_spectator().set_transform(agent._camera.get_transform())
 
-            control = agent.run_step(debug=False)
             agent.update_information()
+            control = agent.run_step(debug=False, speed=40)
             vehicle.apply_control(control)
             agent.show_path(distance=15)
 
-
     finally:
-
         print("Target reached, mission accomplished...")
         vehicle.apply_control(agent.soft_stop())
 
@@ -77,7 +69,6 @@ def main():
 
         world.tick()
 
-        # Desabilita modo síncrono para permitir movimentação da tela
         settings.synchronous_mode = False
         world.apply_settings(settings)
 

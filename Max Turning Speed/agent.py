@@ -23,7 +23,7 @@ class Agent():
         self.ignore_traffic_light = ignore_traffic_light
         self.world = vehicle.get_world()
         self.map = self.world.get_map()
-        self.control_vehicle = VehiclePIDController(vehicle,
+        self.control_vehicle = VehiclePIDController(vehicle, max_throttle=1,
                                                     args_lateral={
                                                         'K_P': 0.58, 'K_D': 0.2, 'K_I': 0.5},
                                                     args_longitudinal={
@@ -118,8 +118,8 @@ class Agent():
                                              life_time=1, persistent_lines=True)
 
     def equal_location(self, vehicle, waypoint):
-        if((abs(vehicle.get_location().x - waypoint.transform.location.x) <= 1
-                and abs(vehicle.get_location().y - waypoint.transform.location.y) <= 1)):
+        if((abs(vehicle.get_location().x - waypoint.transform.location.x) <= 4
+                and abs(vehicle.get_location().y - waypoint.transform.location.y) <= 4)):
             return True
         return False
 
@@ -149,7 +149,7 @@ class Agent():
     def arrived(self):
         return len(self.route) <= 1
 
-    def run_step(self, debug=False):
+    def run_step(self, speed=30, debug=False):
 
         ego_vehicle_wp = self.map.get_waypoint(self.vehicle.get_location())
         if self.equal_location(self.vehicle, self.route[0]):
@@ -184,5 +184,4 @@ class Agent():
         if self.status != 'normal':
             self.status = 'normal'
             print(self.status)
-        return self.control_vehicle.run_step(
-            self.vehicle.get_speed_limit(), self.route[0])
+        return self.control_vehicle.run_step(speed, self.route[0])
