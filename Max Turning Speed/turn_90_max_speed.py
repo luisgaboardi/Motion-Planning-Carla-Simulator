@@ -27,7 +27,7 @@ def main():
 
         settings = world.get_settings()
         settings.synchronous_mode = True
-        settings.fixed_delta_seconds = 0.025
+        settings.fixed_delta_seconds = 0.02
         world.apply_settings(settings)
 
         blueprint_library = world.get_blueprint_library()
@@ -37,7 +37,6 @@ def main():
         destination_point = world.get_map().get_spawn_points()[9]
         vehicle = world.spawn_actor(vehicle_bp, spawn_point)
         actor_list.append(vehicle)
-        world.get_spectator().set_transform(vehicle.get_transform())
         
         world.tick()
 
@@ -54,7 +53,8 @@ def main():
             world.get_spectator().set_transform(agent._camera.get_transform())
 
             agent.update_information()
-            control = agent.run_step(debug=False, speed=40)
+            control = agent.run_step(debug=False, speed=42)
+            print(f'speed: {agent.get_speed(vehicle)}')
             vehicle.apply_control(control)
             agent.show_path(distance=15)
 
@@ -69,6 +69,7 @@ def main():
 
         world.tick()
 
+        # Desabilita modo síncrono para permitir movimentação da tela
         settings.synchronous_mode = False
         world.apply_settings(settings)
 
