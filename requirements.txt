@@ -35,7 +35,7 @@ nbconvert==6.0.7
 nbformat==5.1.2
 nest-asyncio==1.5.1
 networkx==2.5
-notebook==6.3.0
+notebook==6.4.1
 numpy==1.18.4
 open3d==0.12.0
 packaging==20.9
