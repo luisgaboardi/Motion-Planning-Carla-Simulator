@@ -17,10 +17,7 @@ import numpy as np
 
 def get_speed(vehicle):
     """
-    Compute speed of a vehicle in Km/h.
-
-        :param vehicle: the vehicle for which speed is calculated
-        :return: speed as a float in Km/h
+    Calcula a velocidade do veículo em Km/h
     """
     vel = vehicle.get_velocity()
 
