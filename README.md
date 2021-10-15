@@ -2,7 +2,7 @@
 
 ## Objective
 
-Develop a motion planning solution implemented in Python using the Carla Simulator.
+Development of a motion planning solution implemented in Python using the Carla Simulator.
 
 ## Usage
 
@@ -23,7 +23,7 @@ Develop a motion planning solution implemented in Python using the Carla Simulat
 - The student must develop a script in Python that solves the motion planning problem for autonomous vehicles in CARLA simulator.
 - The student must prepare a scientific article on motion planning and the developed solution.
 - The student must present both the script and the article to the supervising professor for appropriate corrections, adjustments and eventual approval of the activities developed during the research period.
-- The deadline of the activities is August 2021.
+- The deadline of the activities is October 31, 2021.
 
 ### As for the trajectory
 - The vehicle must be able to reach any point B from any other point B.
