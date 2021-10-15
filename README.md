@@ -4,6 +4,19 @@
 
 Develop a motion planning solution implemented in Python using the Carla Simulator.
 
+## Usage
+
+### Configuration
+* The following python scripts were developed in Python 3.7.11, through AnaConda.
+* The Operational System was Ubuntu 18.04
+* The CARLA version was 0.9.11, downloaded following the Debian installation from (this installation guide)[https://carla.readthedocs.io/en/0.9.11/start_quickstart/].
+
+### How to Run
+* Add the contents of the 'agents' folder of this repository in the '/opt/carla-simulator/PythonAPI/agents' folder in the your local CARLA.
+* Add the content of the 'examples' folder of this repository in the '/opt/carla-simulator/PythonAPI/examples' folder in the your local CARLA.
+* Install the Python packages from 'requirements.txt' with Pip. For example ``` pip install -r requirements.txt ```
+* In the '/opt/carla-simulator/PythonAPI/examples' folder, run ``` python motion_planning.py ```
+
 ## Acceptance criteria
 
 ### As for the research project
