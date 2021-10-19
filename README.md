@@ -9,7 +9,7 @@ Development of a motion planning solution implemented in Python using the Carla 
 ### Configuration
 * The following python scripts were developed in Python 3.7.11, through AnaConda.
 * The Operational System was Ubuntu 18.04
-* The CARLA version was 0.9.11, downloaded following the Debian installation from (this installation guide)[https://carla.readthedocs.io/en/0.9.11/start_quickstart/].
+* The CARLA version was 0.9.11, downloaded following the Debian installation from [this installation guide](https://carla.readthedocs.io/en/0.9.11/start_quickstart/).
 
 * Processor: Pentium G4560
 * Graphic Card: GTX 1050Ti
