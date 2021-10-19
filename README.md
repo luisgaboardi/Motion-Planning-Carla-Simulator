@@ -11,6 +11,10 @@ Development of a motion planning solution implemented in Python using the Carla 
 * The Operational System was Ubuntu 18.04
 * The CARLA version was 0.9.11, downloaded following the Debian installation from (this installation guide)[https://carla.readthedocs.io/en/0.9.11/start_quickstart/].
 
+* Processor: Pentium G4560
+* Graphic Card: GTX 1050Ti
+* Memory: 16Gb DDR4 2400mhz
+
 ### How to Run
 * Add the contents of the 'agents' folder of this repository in the '/opt/carla-simulator/PythonAPI/agents' folder in the your local CARLA.
 * Add the content of the 'examples' folder of this repository in the '/opt/carla-simulator/PythonAPI/examples' folder in the your local CARLA.
