@@ -66,14 +66,16 @@ def main():
         actor_list.append(vehicle)
         world.tick()
 
-        # Spawndo primeiro obstáculo
+
+        # Spawn primeiro obstáculo
+        obstacle_bp = blueprint_library.filter('vehicle.audi.a2')[0]
         obstacle_spawn_point = _map.get_spawn_points()[62]
-        obstacle = world.spawn_actor(vehicle_bp, obstacle_spawn_point)
+        obstacle = world.spawn_actor(obstacle_bp, obstacle_spawn_point)
         actor_list.append(obstacle)
 
         # Spawn segundo obstáculo
-        obstacle2_spawn_point = carla.Transform(carla.Location(x=-88.056326, y=-48.930733, z=0.930733), carla.Rotation(pitch=0.000000, yaw=89.787674, roll=0.000000))
-        obstacle2 = world.spawn_actor(vehicle_bp, obstacle2_spawn_point)
+        obstacle_spawn_point = carla.Transform(carla.Location(x=-88.056326, y=-48.930733, z=0.930733), carla.Rotation(pitch=0.000000, yaw=89.787674, roll=0.000000))
+        obstacle2 = world.spawn_actor(obstacle_bp, obstacle_spawn_point)
         actor_list.append(obstacle2)
 
         world.tick()
@@ -85,17 +87,14 @@ def main():
         # Gera rota
         agent.set_route(spawn_point.location, destination_point.location)
 
-        world.tick()
-        # Coloca a câmera fixa em terceira pessoa no veículo
-        world.get_spectator().set_transform(agent._camera.get_transform())
-
         # Gameloop
         while not agent.arrived():
             world.tick()
             world.get_spectator().set_transform(agent._camera.get_transform())
-            # Gera o comando de controle ao veeículo
+            # Gera o comando de controle ao veículo
             control = agent.run_step(speed=(vehicle.get_speed_limit())) or agent.emergency_stop()
             vehicle.apply_control(control)
+            # Visualização da rota
             agent.show_path(distance=int(agent.get_speed(vehicle)/2))
 
     finally:
